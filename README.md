@@ -1,8 +1,8 @@
-# Cnitch - clone of tsoding's [snitch](https://github.com/tsoding/snitch) written in C.
+# Cnitch - clone of tsoding's [snitch](https://github.com/tsoding/snitch),but written in C.
 
 Goals of this project:
-    * Work with non git repo
-    * Only recognise the filetype comments.
-    * Sort the TODO/FIXME by programming languages.
+    * Work with non git repos
+    * Only recognise the filetype specific comments.
+    * Group the TODO/FIXME by programming languages.
 
-I may implement the feature for creating issue in github.
+I may not implement the feature for creating issue in github.
