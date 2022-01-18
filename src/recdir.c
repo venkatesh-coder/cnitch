@@ -4,12 +4,19 @@
 #include <dirent.h>
 #include <err.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "recdir.h"
 #include "util.h"
+
+static char ignore_dir_list[][MAX_FILENAME_LEN]  = {".", "..", ".git", "build",
+    ".config", "cscope"
+};
+#define IGNORE_DIRS_CNT (sizeof(ignore_dir_list) / MAX_FILENAME_LEN)
+
 
 RECDIR * recdir_open(char *path)
 {
@@ -70,11 +77,17 @@ struct dirent * recdir_read(RECDIR *recdirp)
             char *filename = ent->d_name;
             if (ent->d_type == DT_DIR)
             {
-                if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
+                bool is_ignore = false;
+                // Ignore the some directories
+                for (uint32_t i = 0; i < IGNORE_DIRS_CNT; i++)
                 {
-                    continue;
+                    if (strcmp(ignore_dir_list[i], filename) == 0)
+                    {
+                        is_ignore = true;
+                        break;
+                    }
                 }
-                else
+                if (!is_ignore)
                 {
                     uint32_t base_len = strlen(top->path);
                     char file_path[base_len + MAX_FILENAME_LEN];
