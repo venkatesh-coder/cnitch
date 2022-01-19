@@ -1,6 +1,6 @@
 #define _GNU_SOURCE
+
 #include <assert.h>
-#include <ctype.h>
 #include <err.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -10,10 +10,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "list.h"
 #include "todo.h"
 #include "util.h"
 
-static FNode *FNodes_HashBucket[HASH_TABLE_SIZE] = {0};
 
 #define UPDATE_CMNT_LEN 7
 static char UpdateCmnts[][UPDATE_CMNT_LEN] = {"TODO:", "FIXME:"};
@@ -99,103 +99,6 @@ void Com_mode_list_print_entries(Com_entry_list *com_list)
 }
 
 
-FNode * HashTable_create_node(const char *file_path)
-{
-    FNode *n = malloc(sizeof(FNode));
-    assert(n != NULL);
-    n->file_path = strdup(file_path); 
-    assert(n->file_path != NULL);
-    n->next = NULL;
-    return n;
-}
-
-
-FNode * HashTable_add_file_path(FNode *fnode)
-{
-    assert(fnode != NULL);
-    uint32_t hash_val = HashTable_hash_func(fnode->file_path);
-    printf("hash_val: %u\n", hash_val);
-
-    FNode *bucket = FNodes_HashBucket[hash_val];
-    if (bucket == NULL)
-    {
-        FNodes_HashBucket[hash_val] = fnode;
-        return FNodes_HashBucket[hash_val];
-    }
-
-    while (bucket->next != NULL)
-    {
-        bucket = bucket->next;
-    }
-    bucket->next = fnode;
-    return bucket->next;
-}
-
-
-uint32_t HashTable_hash_func(const char *file_path)
-{
-    assert(file_path != NULL);
-    if (isupper(file_path[0]))
-        return file_path[0] - ASCII_UPPER_OFFSET + H_DIGIT_OFFSET;
-    else if (islower(file_path[0]))
-        return file_path[0] - ASCII_LOWER_OFFSET + H_DIGIT_OFFSET + H_UPPER_OFFSET;
-    else if (ispunct(file_path[0]))
-        return ALNUM_OFFSET;
-    else if (isdigit(file_path[0]))
-        return file_path[0] - ASCII_ZERO_OFFSET;
-    else
-        assert(0 && "Unreachable");
-}
-
-
-void HashTable_print()
-{
-    for (uint32_t i = 0; i < HASH_TABLE_SIZE; i++)
-    {
-        FNode *bucket = FNodes_HashBucket[i];
-        if (bucket == NULL)
-            continue;
-        while (bucket != NULL)
-        {
-            printf("hfilename: %s\n", bucket->file_path);
-            bucket = bucket->next;
-        }
-    }
-}
-
-
-FNode * HashTable_find_file(char *file_path)
-{
-    uint32_t hash_val = HashTable_hash_func(file_path);
-    FNode *bucket = FNodes_HashBucket[hash_val];
-    if (bucket == NULL)
-        return NULL;
-    while (bucket != NULL)
-    {
-        if (strcmp(bucket->file_path, file_path) == 0)
-            return bucket;
-        bucket = bucket->next;
-    }
-    return NULL;
-}
-
-
-void HashTable_unload()
-{
-    for (uint32_t i = 0; i < HASH_TABLE_SIZE; i++)
-    {
-        FNode *bucket = FNodes_HashBucket[i];
-        if (bucket == NULL)
-            continue;
-        while (bucket != NULL)
-        {
-            FNode *temp = bucket;
-            bucket = bucket->next;
-            free(temp->file_path);
-            free(temp);
-        }
-    }
-}
 
 void read_to_existing_buffer(int fd, char *buf, uint64_t file_size)
 {
@@ -249,9 +152,6 @@ Com_entry_list * add_todos(Com_entry_list **com_ent_list, const char *file_buf, 
                 printf("ln: %u\n", line_no);
                 ent->file_path = NULL;
                 ent->col = col;
-                // priority 
-                // TODO: is_update_comment() has a bug check for the len of the cmnt not
-                // common len
                 ent->priority = 0;
                 Com_mode_list_add_ent(com_ent_list, ent_list_item);
             }
