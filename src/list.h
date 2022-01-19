@@ -3,12 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct {
-    uint32_t line_no;
-    uint32_t col;
-    uint8_t priority;
-    char *file_path;
-} Com_mode_entry;
+#include "todo.h"
 
 typedef struct N_Node { // this name ofuscation is for cscope
     Com_mode_entry com_entry;
