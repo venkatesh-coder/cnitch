@@ -49,8 +49,8 @@ void Com_mode_list_add_ent(Com_entry_list **com_list,
         *com_list = ent_list_item;
         return;
     }
+
     Com_entry_list *list = *com_list;
-    printf("Hi\n");
     while (list->next != NULL)
     {
         list = list->next;
@@ -79,6 +79,7 @@ void Com_mode_find_and_add_todos(
         read_to_existing_buffer(fd, newbuf, file_size);
     else
         newbuf = read_to_new_buffer(fd, file_size);
+    close(fd);
 
     Com_entry_list *appended_entries_start = add_todos(com_ent_list, newbuf, file_size);
     if (file_size > DEFAULT_FILE_SIZE)
@@ -93,7 +94,7 @@ void Com_mode_list_print_entries(Com_entry_list *com_list)
     while (com_list != NULL)
     {
         Com_mode_entry *ent = com_list->ent;
-        printf("c line: %u\n", ent->line_no);
+        printf("%s:%u: \n", ent->file_path, ent->line_no);
         com_list = com_list->next;
     }
 }
@@ -117,31 +118,42 @@ char * read_to_new_buffer(int fd, uint64_t file_size)
 
 
 // FIXME: this reads entire file as buffer
-Com_entry_list * add_todos(Com_entry_list **com_ent_list, const char *file_buf, uint64_t buf_size)
+Com_entry_list * add_todos(Com_entry_list **com_ent_list,
+        const char *file_buf,
+        uint64_t buf_size)
 {
     Com_entry_list *ent_list_item = NULL;
+    Com_entry_list *ent_list_first_item = NULL;
     uint32_t line_no = 1;
     uint32_t col = 1;
-    for (uint64_t i = 0; i < buf_size - 1; i++)
+    for (uint64_t i = 0; i < buf_size; i++)
     {
         if (file_buf[i] == '\n')
         {
             line_no++;
             col = 1;
+            continue;
         }
         if (file_buf[i] == ' ' || file_buf[i] == '\t')
             continue;
+        if (buf_size - i <= 3)
+            break;
+
         uint32_t is_cmnt_or_len = is_comment(file_buf + i); 
         if (is_cmnt_or_len)
         {
-            printf("is_cmnt_or_len: %u\n", is_cmnt_or_len);
             for (i = i + is_cmnt_or_len;
-                    buf_size - 1 && (file_buf[i] == ' ' || file_buf[i] == '\t');
+                    (buf_size - 1 && (file_buf[i] == ' ' || file_buf[i] == '\t'));
                     i++)
                 ;
+            if (buf_size - i - is_cmnt_or_len <= 6)
+                break;
             if (is_update_comment(file_buf + i))
             {
                 ent_list_item = malloc(sizeof(Com_entry_list));
+                if (ent_list_first_item == NULL)
+                    ent_list_first_item = ent_list_item;
+
                 ent_list_item->next = NULL;
                 assert(ent_list_item != NULL);
                 Com_mode_entry *ent = malloc(sizeof(Com_mode_entry));
@@ -149,17 +161,15 @@ Com_entry_list * add_todos(Com_entry_list **com_ent_list, const char *file_buf, 
 
                 ent_list_item->ent = ent;
                 ent->line_no = line_no;
-                printf("ln: %u\n", line_no);
                 ent->file_path = NULL;
                 ent->col = col;
                 ent->priority = 0;
                 Com_mode_list_add_ent(com_ent_list, ent_list_item);
             }
         }
-        i += is_cmnt_or_len;
     }
 
-    return ent_list_item;
+    return ent_list_first_item;
 }
 
 
@@ -188,13 +198,16 @@ void add_file_path_to_appended_entries(Com_entry_list *ent_list, char *file_path
     if (ent_list == NULL)
         return;
 
-    // TODO: implement search function to hashtable it may already exists who knows
-    // if it exists use to find the filepath there and 
-    // reference that to ent_list->ent.file_path;
-    // if the filepath not exists in the hashtabel add now and reference it here.
+    FNode *hashtbl_file_nodep = HashTable_find_file(file_path);
+    if (hashtbl_file_nodep == NULL)
+    {
+        hashtbl_file_nodep = HashTable_create_node(file_path);
+        hashtbl_file_nodep = HashTable_add_new_file_path_node(hashtbl_file_nodep);
+    }
+
     while (ent_list)
     {
-        ent_list->ent->file_path = file_path;
+        ent_list->ent->file_path = hashtbl_file_nodep->file_path;
         ent_list = ent_list->next;
     }
 }
@@ -206,6 +219,7 @@ void Com_mode_list_free_entries(Com_entry_list *com_list)
     {
         Com_entry_list *temp = com_list;
         com_list = com_list->next;
+        /* free(temp->ent->file_path); */
         free(temp->ent);
         free(temp);
     }
