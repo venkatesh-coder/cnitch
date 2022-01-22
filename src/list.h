@@ -32,7 +32,7 @@ void print_list(Node *list);
 void unload_list(Node *list);
 
 FNode * HashTable_create_node(const char *);
-FNode * HashTable_add_file_path(FNode *);
+FNode * HashTable_add_new_file_path_node(FNode *);
 uint32_t HashTable_hash_func(const char *file_path);
 void HashTable_print();
 FNode * HashTable_find_file(char *file_path);

@@ -67,11 +67,10 @@ FNode * HashTable_create_node(const char *file_path)
 }
 
 
-FNode * HashTable_add_file_path(FNode *fnode)
+FNode * HashTable_add_new_file_path_node(FNode *fnode)
 {
     assert(fnode != NULL);
     uint32_t hash_val = HashTable_hash_func(fnode->file_path);
-    printf("hash_val: %u\n", hash_val);
 
     FNode *bucket = FNodes_HashBucket[hash_val];
     if (bucket == NULL)
