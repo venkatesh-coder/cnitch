@@ -17,6 +17,9 @@ static char ignore_dir_list[][MAX_FILENAME_LEN]  = {".", "..", ".git", "build",
 };
 #define IGNORE_DIRS_CNT (sizeof(ignore_dir_list) / MAX_FILENAME_LEN)
 
+static char ignore_filetype_list[][MAX_FILENAME_LEN]  = {"tar", "gzip", "zip", "zstd" };
+#define IGNORE_FILES_CNT (sizeof(ignore_filetype_list) / MAX_FILENAME_LEN)
+
 
 RECDIR * recdir_open(char *path)
 {
@@ -99,12 +102,26 @@ struct dirent * recdir_read(RECDIR *recdirp)
             }
             else if (ent->d_type == DT_REG)
             {
-                return ent;
+                char *ext = get_file_ext(filename);
+                if (ext == NULL)
+                    return ent;
+                bool is_ignore = false;
+                // Ignore the some files based on extension
+                for (uint32_t i = 0; i < IGNORE_FILES_CNT; i++)
+                {
+                    if (strcmp(ignore_filetype_list[i], ext) == 0)
+                    {
+                        is_ignore = true;
+                        break;
+                    }
+                }
+                if (!is_ignore)
+                    return ent;
             }
             else
             {
                 // skip the other types of files
-                fprintf(stderr, "Invalid file\n");
+                fprintf(stderr, "Invalid file: %s\n", filename);
                 continue;
             }
         }
