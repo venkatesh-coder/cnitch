@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <err.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -34,4 +35,20 @@ uint64_t get_file_size(int32_t filedes)
     if (ret != 0)
         err(1, "Unable to read stats for file");
     return statbuf.st_size;
+}
+
+
+char * get_file_ext(char *filename)
+{
+    assert(filename != NULL);
+    uint32_t str_len = strlen(filename);
+    if (str_len <= 2)
+        return NULL;
+
+    for (int32_t i = str_len - 1; i >= 0; i--)
+    {
+        if (filename[i] == '.')
+            return filename + i + 1;
+    }
+    return NULL;
 }
