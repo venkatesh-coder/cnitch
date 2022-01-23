@@ -124,50 +124,59 @@ Com_entry_list * add_todos(Com_entry_list **com_ent_list,
     Com_entry_list *ent_list_item = NULL;
     Com_entry_list *ent_list_first_item = NULL;
     uint32_t line_no = 1;
-    uint32_t col = 1;
-    for (uint64_t i = 0; i < buf_size; i++)
+
+    for (uint64_t end_of_len = 0, line_len = 0, buf_cur_pos = 0;
+            (buf_cur_pos < buf_size && ((line_len = buf_getline_len(file_buf, buf_cur_pos)) > 0));
+            buf_cur_pos = end_of_len, line_no++)
     {
-        if (file_buf[i] == '\n')
-        {
-            line_no++;
-            col = 1;
+        end_of_len = line_len + buf_cur_pos;
+        if (line_len < 7)
             continue;
-        }
-        if (file_buf[i] == ' ' || file_buf[i] == '\t')
-            continue;
-        if (buf_size - i <= 3)
-            break;
 
-        uint32_t is_cmnt_or_len = is_comment(file_buf + i); 
-        if (is_cmnt_or_len)
+        for (uint32_t i = buf_cur_pos, punct_chrs_cnt = 0;
+                i < end_of_len;
+                i++)
         {
-            for (i = i + is_cmnt_or_len;
-                    (buf_size - 1 && (file_buf[i] == ' ' || file_buf[i] == '\t'));
-                    i++)
-                ;
-            if (buf_size - i - is_cmnt_or_len <= 6)
-                break;
-            if (is_update_comment(file_buf + i))
+            if (isspace(file_buf[i]) || isalnum(file_buf[i]))
             {
-                ent_list_item = malloc(sizeof(Com_entry_list));
-                if (ent_list_first_item == NULL)
-                    ent_list_first_item = ent_list_item;
+                punct_chrs_cnt++;
+                continue;
+            }
 
-                ent_list_item->next = NULL;
-                assert(ent_list_item != NULL);
-                Com_mode_entry *ent = malloc(sizeof(Com_mode_entry));
-                assert(ent != NULL);
+            uint32_t is_cmntlen_or_none = is_comment(file_buf + i); 
+            if (is_cmntlen_or_none)
+            {
+                uint32_t update_cmnt_len = 0; 
+                const char *cmp_str = file_buf + i + is_cmntlen_or_none;
+                uint32_t cmp_str_len = line_len - is_cmntlen_or_none - punct_chrs_cnt;
+                if ((update_cmnt_len = is_update_comment(cmp_str, cmp_str_len)))
+                {
+                    const char *updt_cmnt_stmnt = cmp_str + update_cmnt_len;
+                    // TODO: xyz -> updt_cmnt_stmnt_len starting from  T to z\n
+                    uint32_t updt_cmnt_stmnt_len = cmp_str_len - update_cmnt_len;
 
-                ent_list_item->ent = ent;
-                ent->line_no = line_no;
-                ent->file_path = NULL;
-                ent->col = col;
-                ent->priority = 0;
-                Com_mode_list_add_ent(com_ent_list, ent_list_item);
+                    ent_list_item = malloc(sizeof(Com_entry_list));
+                    assert(ent_list_item != NULL);
+                    if (ent_list_first_item == NULL)
+                        ent_list_first_item = ent_list_item;
+
+                    ent_list_item->next = NULL;
+                    Com_mode_entry *ent = malloc(sizeof(Com_mode_entry));
+                    assert(ent != NULL);
+
+                    ent_list_item->ent = ent;
+                    ent->line_no = line_no;
+                    ent->file_path = NULL;
+                    ent->priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);;
+                    Com_mode_list_add_ent(com_ent_list, ent_list_item);
+                }
+            }
+            else
+            {
+                punct_chrs_cnt++;
             }
         }
     }
-
     return ent_list_first_item;
 }
 
