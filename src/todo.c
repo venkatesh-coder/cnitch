@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 
 #include <assert.h>
+#include <ctype.h>
 #include <err.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -16,7 +17,7 @@
 
 
 #define UPDATE_CMNT_LEN 7
-static char UpdateCmnts[][UPDATE_CMNT_LEN] = {"TODO:", "FIXME:"};
+static char UpdateCmnts[][UPDATE_CMNT_LEN] = {"TODO", "FIXME"};
 #define UPDATE_CMNTS_CNT (sizeof(UpdateCmnts) / UPDATE_CMNT_LEN)
 
 #define CMNT_LEN 4
