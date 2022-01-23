@@ -20,7 +20,7 @@ typedef struct LCom_entry_list{
 } Com_entry_list;
 
 
-Com_mode_entry Com_mode_create_ent(const char *, uint32_t, uint32_t, uint8_t);
+Com_mode_entry Com_mode_create_ent(const char *, uint32_t, uint8_t);
 void Com_mode_list_add_ent(Com_entry_list **, Com_entry_list *);
 void Com_mode_print_entries(Com_mode_entry *);
 void Com_mode_find_and_add_todos(Com_entry_list **, char *);
