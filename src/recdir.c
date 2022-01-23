@@ -17,7 +17,8 @@ static char ignore_dir_list[][MAX_FILENAME_LEN]  = {".", "..", ".git", "build",
 };
 #define IGNORE_DIRS_CNT (sizeof(ignore_dir_list) / MAX_FILENAME_LEN)
 
-static char ignore_filetype_list[][MAX_FILENAME_LEN]  = {"tar", "gzip", "zip", "zstd" };
+static char ignore_filetype_list[][MAX_FILENAME_LEN]  = {"tar", "gzip",
+    "zip", "zstd", "out"};
 #define IGNORE_FILES_CNT (sizeof(ignore_filetype_list) / MAX_FILENAME_LEN)
 
 
