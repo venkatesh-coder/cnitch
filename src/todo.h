@@ -25,8 +25,8 @@ void Com_mode_list_add_ent(Com_entry_list **, Com_entry_list *);
 void Com_mode_print_entries(Com_mode_entry *);
 void Com_mode_find_and_add_todos(Com_entry_list **, char *);
 
-void Com_mode_list_print_entries(Com_entry_list *com_list);
-void Com_mode_list_free_entries(Com_entry_list *com_list);
+void Com_mode_list_print_entries(Com_entry_list *);
+void Com_mode_list_free_entries(Com_entry_list *);
 void read_to_existing_buffer(int, char *, uint64_t);
 
 char * read_to_new_buffer(int, uint64_t);
