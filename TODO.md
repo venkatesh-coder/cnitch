@@ -5,7 +5,7 @@
 [ ] support as many languages as possible.
 [x] Print them in compilation mode format.
 [ ] Later add option to seperate them by the programming language.
-[x] rewrite the add_todos function to read line by line from the read buffers
+[x] rewrite the add_update_cmnts function to read line by line from the read buffers
     so that I can give the line as context.
 [ ] Sort them by priority level. 
     note: TODOOOO Higher priority Than TODO.

@@ -80,7 +80,7 @@ void Com_mode_find_and_add_todos(
         newbuf = read_to_new_buffer(fd, file_size);
     close(fd);
 
-    Com_entry_list *appended_entries_start = add_todos(com_ent_list, newbuf, file_size);
+    Com_entry_list *appended_entries_start = add_update_cmnts(com_ent_list, newbuf, file_size);
     if (file_size > DEFAULT_FILE_SIZE)
         free(newbuf);
     add_file_path_to_appended_entries(appended_entries_start, file_path);
@@ -117,7 +117,7 @@ char * read_to_new_buffer(int fd, uint64_t file_size)
 
 
 // FIXME: this reads entire file as buffer
-Com_entry_list * add_todos(Com_entry_list **com_ent_list,
+Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
         const char *file_buf,
         uint64_t buf_size)
 {
