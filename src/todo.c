@@ -27,14 +27,12 @@ static char CmntsFmt[][CMNT_LEN] = {"//", "/*", "#", "--"};
 Com_mode_entry Com_mode_create_ent(
         const char *file_path,
         uint32_t line_no,
-        uint32_t col,
         uint8_t priority)
 {
     (void) file_path;
     Com_mode_entry ent;
 
     ent.line_no = line_no;
-    ent.col = col;
     ent.priority = priority;
 
     return ent;

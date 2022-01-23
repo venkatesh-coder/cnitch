@@ -9,13 +9,6 @@
 // vim/emacs compilation mode data.
 typedef struct {
     uint32_t line_no;
-    uint32_t col;
-} Com_mode_no_file_path;
-
-
-typedef struct {
-    uint32_t line_no;
-    uint32_t col;
     uint8_t priority;
     char *file_path;
 } Com_mode_entry;
