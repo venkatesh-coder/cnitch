@@ -234,3 +234,17 @@ void Com_mode_list_free_entries(Com_entry_list *com_list)
         free(temp);
     }
 }
+
+
+uint32_t find_priority(const char *updt_cmnt_stmnt, uint32_t updt_cmnt_stmnt_len)
+{
+    uint32_t priority = 0;
+    for (uint32_t j = 0; j < updt_cmnt_stmnt_len; j++)
+    {
+        if (isalpha(updt_cmnt_stmnt[j]))
+            priority++;
+        else
+            break;
+    }
+    return priority;
+}

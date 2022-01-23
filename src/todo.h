@@ -33,6 +33,7 @@ char * read_to_new_buffer(int, uint64_t);
 Com_entry_list * add_todos(Com_entry_list **, const char *, uint64_t);
 uint32_t is_update_comment(const char *, uint64_t);
 uint32_t is_comment(const char *);
+uint32_t find_priority(const char *, uint32_t);
 
 void add_file_path_to_appended_entries(Com_entry_list *, char *);
 
