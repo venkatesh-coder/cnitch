@@ -172,12 +172,23 @@ Com_entry_list * add_todos(Com_entry_list **com_ent_list,
 }
 
 
-bool is_update_comment(const char *str)
+uint32_t is_update_comment(const char *str, uint64_t len)
 {
+    uint64_t idx = 0;
+    uint32_t sp_cnt = 0;
+    // FIXME: remove sp_cnt somehow
+    for (idx = 0; idx < len && isspace(str[idx]); idx++)
+        sp_cnt++;
+    sp_cnt--;
+
+    str = str + idx;
     for (uint32_t i = 0; i < UPDATE_CMNTS_CNT; i++)
-        if (strncasecmp(str, UpdateCmnts[i], strlen(UpdateCmnts[i])) == 0)
-            return true;
-    return false;
+    {
+        uint32_t cmp_len = strlen(UpdateCmnts[i]);
+        if (strncmp(str, UpdateCmnts[i], cmp_len) == 0)
+            return cmp_len + sp_cnt;
+    }
+    return 0;
 }
 
 
