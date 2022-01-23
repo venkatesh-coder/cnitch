@@ -52,3 +52,18 @@ char * get_file_ext(char *filename)
     }
     return NULL;
 }
+
+
+uint32_t buf_getline_len(const char *buf, uint64_t start_idx)
+{
+    uint32_t line_len = 0;
+    uint64_t pos = 0;
+    do
+    {
+        pos = start_idx + line_len;
+        line_len++;
+    } while (buf[pos] != '\n' && buf && buf[pos] != '\0');
+    if (buf[pos] != '\n')
+        line_len--;
+    return line_len;
+}

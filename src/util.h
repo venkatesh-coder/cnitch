@@ -7,9 +7,10 @@
 #define PATH_SEP_LEN (sizeof(PATH_SEP) - 1)
 
 // this allocate memory on heap, change it to stack now.
-char * join_path(char base[], char filename[]);
-uint64_t get_file_size(int32_t filedes);
-char * get_file_ext(char *filename);
+char * join_path(char [], char []);
+uint64_t get_file_size(int32_t);
+char * get_file_ext(char *);
+uint32_t buf_getline_len(const char *, uint64_t);
 
 #endif
 
