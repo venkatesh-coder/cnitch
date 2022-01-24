@@ -34,6 +34,7 @@ int main(void)
         ent = recdir_read(recdirp);
     }
     recdir_close(recdirp);
+    Com_mode_list_sort_by_priority(com_ent_list);
     Com_mode_list_print_entries(com_ent_list);
 
     HashTable_unload();     // this uses global structure.

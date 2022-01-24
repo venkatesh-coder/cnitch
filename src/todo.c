@@ -93,7 +93,8 @@ void Com_mode_list_print_entries(Com_entry_list *com_list)
     while (com_list != NULL)
     {
         Com_mode_entry *ent = com_list->ent;
-        printf("%s:%u: \n", ent->file_path, ent->line_no);
+        printf("%s:%u: %u\n", ent->file_path,
+                ent->line_no, ent->priority);
         com_list = com_list->next;
     }
 }
@@ -256,4 +257,33 @@ uint32_t find_priority(const char *updt_cmnt_stmnt, uint32_t updt_cmnt_stmnt_len
             break;
     }
     return priority;
+}
+
+
+void Com_mode_list_sort_by_priority(Com_entry_list *list)
+{
+    if (list == NULL)
+        return;
+    Com_entry_list *first = list;
+    bool is_swapped = false;
+    do {
+        is_swapped = false;
+        first = list;
+        while (first->next != NULL)
+        {
+            Com_entry_list *second = first->next;
+            if (first->ent->priority < second->ent->priority)
+            {
+                is_swapped = true;
+                uint32_t t_prior = first->ent->priority;
+                first->ent->priority = second->ent->priority;
+                second->ent->priority = t_prior;
+                char *str_p = first->ent->file_path;
+                first->ent->file_path = second->ent->file_path;
+                second->ent->file_path = str_p;
+            }
+
+            first = first->next;
+        }
+    } while (is_swapped);
 }
