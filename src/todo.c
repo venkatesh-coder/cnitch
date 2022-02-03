@@ -58,7 +58,7 @@ void Com_mode_list_add_ent(Com_entry_list **com_list,
 }
 
 
-void Com_mode_find_and_add_todos(
+void Com_mode_find_and_updt_cmnts(
         Com_entry_list **com_ent_list,
         char *file_path)
 {

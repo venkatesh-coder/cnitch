@@ -30,7 +30,8 @@ int main(void)
         strcpy(file_path, dir_path);
         char *file_path_p = join_path(file_path, ent->d_name); 
 
-        Com_mode_find_and_add_todos(&com_ent_list, file_path_p);
+        Com_mode_find_and_updt_cmnts(&com_ent_list, file_path_p);
+
         ent = recdir_read(recdirp);
     }
     recdir_close(recdirp);
