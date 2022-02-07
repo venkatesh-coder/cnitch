@@ -83,18 +83,19 @@ void Com_mode_find_and_updt_cmnts(
     Com_entry_list *appended_entries_start = add_update_cmnts(com_ent_list, newbuf, file_size);
     if (file_size > DEFAULT_FILE_SIZE)
         free(newbuf);
+    if (appended_entries_start == NULL)
+        return;
     add_file_path_to_appended_entries(appended_entries_start, file_path);
 }
 
 
 void Com_mode_list_print_entries(Com_entry_list *com_list)
 {
-    printf("list\n");
     while (com_list != NULL)
     {
         Com_mode_entry *ent = com_list->ent;
-        printf("%s:%u: %u\n", ent->file_path,
-                ent->line_no, ent->priority);
+        printf("%s:%u: %s\n", ent->file_path,
+                ent->line_no, ent->line);
         com_list = com_list->next;
     }
 }
@@ -153,7 +154,7 @@ Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
                 if ((update_cmnt_len = is_update_comment(cmp_str, cmp_str_len)))
                 {
                     const char *updt_cmnt_stmnt = cmp_str + update_cmnt_len;
-                    // TODO: xyz -> updt_cmnt_stmnt_len starting from  T to z\n
+                    // TODOOOO: xyz -> updt_cmnt_stmnt_len starting from  O to z\n
                     uint32_t updt_cmnt_stmnt_len = cmp_str_len - update_cmnt_len;
 
                     ent_list_item = malloc(sizeof(Com_entry_list));
@@ -213,10 +214,22 @@ uint32_t is_comment(const char *str)
 }
 
 
-void add_file_path_to_appended_entries(Com_entry_list *ent_list, char *file_path)
+void add_file_path_to_appended_entries(Com_entry_list *ent_list,
+        char *file_path)
 {
+
     if (ent_list == NULL)
-        return;
+    {
+        fprintf(stderr, "Error: %s: ent_list should "
+                "not be NULL\n", __func__);
+        exit(1);
+    }
+    if (file_path == NULL)
+    {
+        fprintf(stderr, "Error: %s: file_path should "
+                "not be NULL\n", __func__);
+        exit(1);
+    }
 
     FNode *hashtbl_file_nodep = HashTable_find_file(file_path);
     if (hashtbl_file_nodep == NULL)
