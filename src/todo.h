@@ -11,6 +11,7 @@ typedef struct {
     uint32_t line_no;
     uint8_t priority;
     char *file_path;
+    char *line;
 } Com_mode_entry;
 
 
