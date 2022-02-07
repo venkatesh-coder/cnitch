@@ -38,7 +38,7 @@ int main(void)
     Com_mode_list_sort_by_priority(com_ent_list);
     Com_mode_list_print_entries(com_ent_list);
 
-    HashTable_unload();     // this uses global structure.
+    HashTable_unload();     // this uses global variable.
     Com_mode_list_free_entries(com_ent_list);
 
     free(recdirp);

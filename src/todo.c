@@ -169,7 +169,7 @@ Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
                     ent_list_item->ent = ent;
                     ent->line_no = line_no;
                     ent->file_path = NULL;
-                    ent->priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);;
+                    ent->priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);
                     Com_mode_list_add_ent(com_ent_list, ent_list_item);
                 }
             }

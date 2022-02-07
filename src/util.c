@@ -67,3 +67,26 @@ uint32_t buf_getline_len(const char *buf, uint64_t start_idx)
         line_len--;
     return line_len;
 }
+
+
+void print_nline(const char *str, uint32_t len)
+{
+    assert(len > 0 && "len should be greater than zero");
+    for (uint32_t i = 0; i < len; i++)
+        putchar(str[i]);
+    if (str[len - 1] != '\n')
+        putchar('\n');
+}
+
+
+uint32_t strline_len(const char *strline, uint64_t max_len)
+{
+    assert(strline != NULL);
+    assert(max_len > 0);
+    uint32_t i = 0;
+    for (; strline[i] != '\n' && i < max_len; i++)
+        ;
+    if (strline[i] == '\n' && i > 0)
+        i--;
+    return i;
+}

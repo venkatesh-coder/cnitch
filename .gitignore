@@ -2,3 +2,5 @@ build/*
 cscope/*
 cscope.out
 tags
+run.sh
+vgcore*
