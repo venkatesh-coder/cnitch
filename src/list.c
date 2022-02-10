@@ -37,7 +37,6 @@ void add_file(Node *list, Com_mode_entry com_entry)
 
 void print_list(Node *list)
 {
-    printf("List:\n");
     while (list != NULL)
     {
         printf("file_path: %s\n", list->com_entry.file_path);
@@ -113,7 +112,7 @@ void HashTable_print()
             continue;
         while (bucket != NULL)
         {
-            printf("hfilename: %s\n", bucket->file_path);
+            printf("filename: %s\n", bucket->file_path);
             bucket = bucket->next;
         }
     }

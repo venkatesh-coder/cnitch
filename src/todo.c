@@ -158,10 +158,6 @@ Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
                     uint32_t priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);
                     updt_cmnt_stmnt += priority + 1;
                     updt_cmnt_stmnt_len -= (priority + 1);
-                    for (uint32_t c = 0; c < updt_cmnt_stmnt_len; c++)
-                    {
-                        putchar(updt_cmnt_stmnt[c]);
-                    }
 
                     ent_list_item = malloc(sizeof(Com_entry_list));
                     assert(ent_list_item != NULL);
