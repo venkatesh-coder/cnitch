@@ -10,5 +10,5 @@
 [ ] Sort them by priority level. 
     note: TODOOOO Higher priority Than TODO.
 
-eg. o/p: src/main.cpp:182:     // TODO: remove
+eg. o/p: src/main.cpp:182:     // TODO: [remove](remove)
 

@@ -94,8 +94,7 @@ void Com_mode_list_print_entries(Com_entry_list *com_list)
     while (com_list != NULL)
     {
         Com_mode_entry *ent = com_list->ent;
-        printf("%s:%u: %s\n", ent->file_path,
-                ent->line_no, ent->line);
+        printf("%s:%u: %s\n", ent->file_path, ent->line_no, ent->line);
         com_list = com_list->next;
     }
 }
@@ -156,6 +155,13 @@ Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
                     const char *updt_cmnt_stmnt = cmp_str + update_cmnt_len;
                     // TODOOOO: xyz -> updt_cmnt_stmnt_len starting from  O to z\n
                     uint32_t updt_cmnt_stmnt_len = cmp_str_len - update_cmnt_len;
+                    uint32_t priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);
+                    updt_cmnt_stmnt += priority + 1;
+                    updt_cmnt_stmnt_len -= (priority + 1);
+                    for (uint32_t c = 0; c < updt_cmnt_stmnt_len; c++)
+                    {
+                        putchar(updt_cmnt_stmnt[c]);
+                    }
 
                     ent_list_item = malloc(sizeof(Com_entry_list));
                     assert(ent_list_item != NULL);
@@ -168,8 +174,10 @@ Com_entry_list * add_update_cmnts(Com_entry_list **com_ent_list,
 
                     ent_list_item->ent = ent;
                     ent->line_no = line_no;
+                    ent->line = malloc(updt_cmnt_stmnt_len + 1);
+                    strncpy(ent->line, updt_cmnt_stmnt, updt_cmnt_stmnt_len);
                     ent->file_path = NULL;
-                    ent->priority = find_priority(updt_cmnt_stmnt, updt_cmnt_stmnt_len);
+                    ent->priority = priority;
                     Com_mode_list_add_ent(com_ent_list, ent_list_item);
                 }
             }
@@ -187,7 +195,7 @@ uint32_t is_update_comment(const char *str, uint64_t len)
 {
     uint64_t idx = 0;
     uint32_t sp_cnt = 0;
-    // FIXME: remove sp_cnt somehow
+    // FIXME: remove sp_cnt some how
     for (idx = 0; idx < len && isspace(str[idx]); idx++)
         sp_cnt++;
     sp_cnt--;
@@ -253,6 +261,7 @@ void Com_mode_list_free_entries(Com_entry_list *com_list)
         Com_entry_list *temp = com_list;
         com_list = com_list->next;
         /* free(temp->ent->file_path); */
+        free(temp->ent->line);
         free(temp->ent);
         free(temp);
     }
