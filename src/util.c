@@ -90,3 +90,11 @@ uint32_t strline_len(const char *strline, uint64_t max_len)
         i--;
     return i;
 }
+
+
+char * strip_front(char *str)
+{
+    while (*str == ' ' && *str != '\0')
+        str++;
+    return str;
+}

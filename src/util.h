@@ -13,6 +13,6 @@ char * get_file_ext(char *);
 uint32_t buf_getline_len(const char *, uint64_t);
 void print_nline(const char *, uint32_t);
 uint32_t strline_len(const char *, uint64_t);
+char * strip(char *str);
 
 #endif
-
